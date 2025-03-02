@@ -1,31 +1,69 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    background-image: url('resources/backGround.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 100vh;
+    font-family: "Fredoka", serif;
+}
+
 html{
     scroll-behavior: smooth;
 }
+
 .titulo{
     display: flex;
-    justify-content: center;
     text-align: center;
-    background-image: url('');
+    background-color: rgba(0, 0, 0, 0.493);
+    color: white;
+    height: 200px;
 }
 
+.titulo img{
+    height: 180px;
+    width: 180px;
+    padding-left:40px;
+    padding-top:10px ;
+}
+
+.titulo img:nth-of-type(2){
+    padding: 50px 30px 10px;
+    width: 70px;
+    height: 70px;
+}
+
+.tituloH1{
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    width: 100%;
+}
+.productosHeader{
+    background-color: #e65c00;
+}
 
 /* Contenedor que mantiene los productos */
 .productosContainer {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
     gap: 10px; 
-    max-width: 1200px; 
-    padding: 20px;
+    padding: 40px;
     box-sizing: border-box;
     width: 100%;
     margin: 0 auto;
-    justify-items: center;
-    
+    justify-items: center; 
 }
 
 /* Estilos para cada producto */
 .producto-card {
-    width: 250px;
+    width: 80%;
     border: 1px solid #ddd;
     border-radius: 10px;
     overflow: hidden;

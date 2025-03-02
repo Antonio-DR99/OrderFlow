@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <!--Fuente Google Fonts-->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=shopping_cart" />
+    <!-- Tipografía -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Creepster&family=Danfo&family=Fredoka:wght@300..700&family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Michroma&family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Play:wght@400;700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Rubik+Wet+Paint&family=Sixtyfour+Convergence&family=Tiny5&display=swap" rel="stylesheet">
+    <!-- Fuente Google Fonts
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=shopping_cart" /> -->
 
     <!--Hoja de estilos-->
     <link rel="stylesheet" href="style.css">
@@ -14,10 +18,12 @@
 </head>
 <body>
     <div class="titulo">
-        <h1>Titulo</h1>
+        <img src="resources/icon/logo2.png" alt="">
+        <div class="tituloH1"><h1>BURGUER BLAZE</h1></div>
+        <img src="resources/icon/cart.png" alt="">
     </div>
     <div class="productosHeader">
-        <h2>TODAS NUESTRAS BURGUES</h2>
+        <h2>TODAS NUESTRAS BURGUERS</h2>
     </div>
     <div class="productosContainer">
         <div class="producto-card">
@@ -25,7 +31,7 @@
             <h3>La Rey Burger</h3>
             <div class="cantidad">
                 <button onclick="modificarCantidad('menos', this)">-</button>
-                <span class="cantidadProducto">1</span>
+                <span class="cantidadProducto">0</span>
                 <button onclick="modificarCantidad('mas', this)">+</button>
             </div>
             <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
@@ -35,7 +41,7 @@
             <h3>Fuego Mexicano</h3>
             <div class="cantidad">
                 <button onclick="modificarCantidad('menos', this)">-</button>
-                <span class="cantidadProducto">1</span>
+                <span class="cantidadProducto">0</span>
                 <button onclick="modificarCantidad('mas', this)">+</button>
             </div>
             <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
@@ -45,7 +51,7 @@
             <h3>El Sabor Viajero</h3>
             <div class="cantidad">
                 <button onclick="modificarCantidad('menos', this)">-</button>
-                <span class="cantidadProducto">1</span>
+                <span class="cantidadProducto">0</span>
                 <button onclick="modificarCantidad('mas', this)">+</button>
             </div>
             <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
@@ -61,7 +67,7 @@
             <h3>Choripán</h3>
             <div class="cantidad">
                 <button onclick="modificarCantidad('menos', this)">-</button>
-                <span class="cantidadProducto">1</span>
+                <span class="cantidadProducto">0</span>
                 <button onclick="modificarCantidad('mas', this)">+</button>
             </div>
             <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
@@ -71,7 +77,7 @@
             <h3>SalsiDog</h3>
             <div class="cantidad">
                 <button onclick="modificarCantidad('menos', this)">-</button>
-                <span class="cantidadProducto">1</span>
+                <span class="cantidadProducto">0</span>
                 <button onclick="modificarCantidad('mas', this)">+</button>
             </div>
             <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
@@ -81,16 +87,16 @@
             <h3>Perrito Picante</h3>
             <div class="cantidad">
                 <button onclick="modificarCantidad('menos', this)">-</button>
-                <span class="cantidadProducto">1</span>
+                <span class="cantidadProducto">0</span>
                 <button onclick="modificarCantidad('mas', this)">+</button>
             </div>
             <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
         </div>
     </div>
-   
 
 
- 
+
+
 
     
 
