@@ -15,7 +15,7 @@ body{
 html{
     scroll-behavior: smooth;
 }
-
+/* header */
 .titulo{
     display: flex;
     text-align: center;
@@ -24,7 +24,7 @@ html{
     height: 200px;
 }
 
-/* header */
+
 .titulo img{
     height: 180px;
     width: 180px;
@@ -44,13 +44,14 @@ transform: scale(1.1);
     align-items: center;
     font-size: 50px;
     width: 100%;
+    margin-right: 70px;
 }
 
 /* Menu de pedidos */
 .menuEmergente{
     background-color: #ffffff1e;
     width: 620px;
-    height: 100vh;
+    height: 200px;
     right: -570px;
     position: fixed;
     transition: 0.3s ease-in-out;
@@ -62,6 +63,8 @@ transform: scale(1.1);
     background-color: rgba(121, 121, 121, 0.221);
     backdrop-filter: blur(6px);
     transform: translatex(-570px);
+    height: 100vh;
+
 }
 .menuEmergente img{
     width: 40px;
@@ -208,7 +211,7 @@ transform: scale(1.1);
 .zonaPedido{
     display: flex;
     flex-direction: column;
-    width: 48%;
+    width: 50%;
     height: 100%;
     display: flex;
     text-align: center;
@@ -218,7 +221,7 @@ transform: scale(1.1);
 .zonaEstado{
     display: flex;
     flex-direction: column;
-    width: 48%;
+    width: 50%;
     height: 100%;
     display: flex;
     text-align: center;
