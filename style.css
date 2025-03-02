@@ -24,6 +24,7 @@ html{
     height: 200px;
 }
 
+/* header */
 .titulo img{
     height: 180px;
     width: 180px;
@@ -36,12 +37,6 @@ html{
 transform: scale(1.1);
 }
 
-.titulo img:nth-of-type(2){
-    padding: 50px 30px 10px;
-    width: 70px;
-    height: 70px;
-}
-
 .tituloH1{
     display: flex;
     text-align: center;
@@ -51,29 +46,61 @@ transform: scale(1.1);
     width: 100%;
 }
 
+/* Menu de pedidos */
 .menuEmergente{
     background-color: #ffffff1e;
     width: 620px;
     height: 100vh;
     right: -570px;
     position: fixed;
-    transition: 0.2s ease-in-out;
+    transition: 0.3s ease-in-out;
     backdrop-filter: blur(2px);
-    z-index: 10;
 }
 
 .menuEmergente:hover{
-    transition-delay:0.1s;
+    /* transition-delay:0.1s; */
     background-color: rgba(121, 121, 121, 0.221);
     backdrop-filter: blur(6px);
     transform: translatex(-570px);
 }
 .menuEmergente img{
     width: 40px;
-    padding-top: 70px;
+    padding-top: 30px;
     padding-left: 5px;
 }
 
+.menuInt{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    background-color: #ffffffa8;
+    border-radius: 1em;
+    width: 510px;
+    height: 85%;
+    margin-left: 50px;
+    justify-content: space-between;
+    padding: 20px;
+}
+.menuInt button{
+    background: #ff6600;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 0.5em;
+    cursor: pointer;
+    font-size: 16px;
+    width: 80%;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    margin-bottom: 20px;
+}
+.menuInt button:hover {
+    background: #e65c00;
+}
+
+/* titulos h2 */
 .productosHeader{
     background-color: #ff6600;
     padding-left: 60px;
@@ -168,5 +195,31 @@ transform: scale(1.1);
 
 .producto-card button.añadir:hover {
     background: #e65c00;
+}
+
+/* footer */
+.zonaDisplay{
+    display: flex;
+    width: 100%;
+    height: 400px;
+    background-color: rgba(0, 0, 0, 0.493);
+    color: white;
+}
+.zonaPedido{
+    background-color: #0000005b;
+    width: 48%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+}
+    
+.zonaEstado{
+    background-color: #0000005b;
+    width: 48%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    justify-content: center;
 }
 
