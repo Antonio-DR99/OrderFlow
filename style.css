@@ -29,6 +29,11 @@ html{
     width: 180px;
     padding-left:40px;
     padding-top:10px ;
+    transition: 0.3s ease;
+}
+
+.titulo img:hover {
+transform: scale(1.1);
 }
 
 .titulo img:nth-of-type(2){
@@ -45,8 +50,33 @@ html{
     font-size: 50px;
     width: 100%;
 }
+
+.menuEmergente{
+    background-color: #ffffff1e;
+    width: 620px;
+    height: 100vh;
+    right: -570px;
+    position: fixed;
+    transition: 0.2s ease-in-out;
+    backdrop-filter: blur(2px);
+    z-index: 10;
+}
+
+.menuEmergente:hover{
+    transition-delay:0.1s;
+    background-color: rgba(121, 121, 121, 0.221);
+    backdrop-filter: blur(6px);
+    transform: translatex(-570px);
+}
+.menuEmergente img{
+    width: 40px;
+    padding-top: 70px;
+    padding-left: 5px;
+}
+
 .productosHeader{
-    background-color: #e65c00;
+    background-color: #ff6600;
+    padding-left: 60px;
 }
 
 /* Contenedor que mantiene los productos */
@@ -64,18 +94,22 @@ html{
 /* Estilos para cada producto */
 .producto-card {
     width: 80%;
-    border: 1px solid #ddd;
+    border: 1px solid #dddddd00;
     border-radius: 10px;
     overflow: hidden;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     padding: 10px;
-    background: #fff;
-    transition: transform 0.2s ease-in-out;
+    background: #ffffff23;
+    transition: 0.2s ease-in-out;
+    color: white;
 }
 
 .producto-card:hover {
     transform: scale(1.05); 
+    border-color: #ff6600;
+    background: #ffffff59;
+
 }
 
 .producto-card img {

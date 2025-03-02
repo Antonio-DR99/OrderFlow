@@ -17,10 +17,13 @@
 
 </head>
 <body>
+    <div class="menuEmergente">
+        <img src="resources/icon/cart.png" alt="">
+
+    </div>
     <div class="titulo">
         <img src="resources/icon/logo2.png" alt="">
         <div class="tituloH1"><h1>BURGUER BLAZE</h1></div>
-        <img src="resources/icon/cart.png" alt="">
     </div>
     <div class="productosHeader">
         <h2>TODAS NUESTRAS BURGUERS</h2>
@@ -85,6 +88,42 @@
         <div class="producto-card">
             <img src="resources/dogs/dog3.jpg" alt="Perrito Picante">
             <h3>Perrito Picante</h3>
+            <div class="cantidad">
+                <button onclick="modificarCantidad('menos', this)">-</button>
+                <span class="cantidadProducto">0</span>
+                <button onclick="modificarCantidad('mas', this)">+</button>
+            </div>
+            <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
+        </div>
+    </div>
+
+    <div class="productosHeader">
+        <h2>TODOS NUESTROS BOCADILLOS</h2>
+    </div>
+    <div class="productosContainer">
+        <div class="producto-card">
+            <img src="resources/bocadillos/crujiente.jpg" alt="Choripán">
+            <h3>El crujiente</h3>
+            <div class="cantidad">
+                <button onclick="modificarCantidad('menos', this)">-</button>
+                <span class="cantidadProducto">0</span>
+                <button onclick="modificarCantidad('mas', this)">+</button>
+            </div>
+            <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
+        </div>
+        <div class="producto-card">
+            <img src="resources/bocadillos/sabroso.jpg" alt="SalsiDog">
+            <h3>El sabroso</h3>
+            <div class="cantidad">
+                <button onclick="modificarCantidad('menos', this)">-</button>
+                <span class="cantidadProducto">0</span>
+                <button onclick="modificarCantidad('mas', this)">+</button>
+            </div>
+            <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
+        </div>
+        <div class="producto-card">
+            <img src="resources/bocadillos/iberico.jpg" alt="Perrito Picante">
+            <h3>El Ibérico</h3>
             <div class="cantidad">
                 <button onclick="modificarCantidad('menos', this)">-</button>
                 <span class="cantidadProducto">0</span>
