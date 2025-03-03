@@ -25,6 +25,7 @@
             
             <button onclick="confirmarPedido()">Confirmar Pedido</button>
         </div>
+
     </div>
     <div class="titulo">
         <img src="resources/icon/logo2.png" alt="">
@@ -36,13 +37,24 @@
     <div class="productosContainer">
         <div class="producto-card">
             <img src="resources/burger/burger1.jpg" alt="La Rey Burger">
-            <h3>La Rey Burger</h3>
+            <h3>La Rey Burger</h3> <p>Pan, carne, lechuga, tomate, queso</p>
             <div class="cantidad">
                 <button onclick="modificarCantidad('menos', this)">-</button>
                 <span class="cantidadProducto">0</span>
                 <button onclick="modificarCantidad('mas', this)">+</button>
             </div>
-            <button class="añadir" onclick="añadirCarrito(event)">Añadir al carrito</button>
+            <div class="Complementos"> 
+                <form action="">
+                    <legend><strong>Complementos</strong></legend><br>
+                    <label for="bacon">Bacon</label>&nbsp;<input type="checkbox" id="bacon">&nbsp;<br>
+                    <label for="bacon">Cebolla caralmelizada</label>&nbsp;<input type="checkbox" id="cebolla">&nbsp;<br>
+                    <label for="bacon">Huevo</label>&nbsp;<input type="checkbox" id="huevo">&nbsp;<br>
+                    <label for="bacon">Champiñones</label>&nbsp;<input type="checkbox" id="champiñones">&nbsp;<br>
+                    <label for="bacon">jalapeños</label>&nbsp;<input type="checkbox" id="jalapeños">&nbsp;<br>
+                    <label for="bacon">Mayonesa</label>&nbsp;<input type="checkbox" id="mayonesa">&nbsp;<br>
+                </form>
+            </div>
+            <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
         </div>
         <div class="producto-card">
             <img src="resources/burger/burger2.jpg" alt="Fuego Mexicano">
@@ -52,7 +64,7 @@
                 <span class="cantidadProducto">0</span>
                 <button onclick="modificarCantidad('mas', this)">+</button>
             </div>
-            <button class="añadir" onclick="añadirCarrito(event)">Añadir al carrito</button>
+            <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
         </div>
         <div class="producto-card">
             <img src="resources/burger/burger3.jpg" alt="El Sabor Viajero">
@@ -62,7 +74,7 @@
                 <span class="cantidadProducto">0</span>
                 <button onclick="modificarCantidad('mas', this)">+</button>
             </div>
-            <button class="añadir" onclick="añadirCarrito(event)">Añadir al carrito</button>
+            <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
         </div>
     </div>
 
@@ -78,7 +90,7 @@
                 <span class="cantidadProducto">0</span>
                 <button onclick="modificarCantidad('mas', this)">+</button>
             </div>
-            <button class="añadir" onclick="añadirCarrito(event)">Añadir al carrito</button>
+            <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
         </div>
         <div class="producto-card">
             <img src="resources/dogs/dogs2.jpg" alt="SalsiDog">
@@ -88,7 +100,7 @@
                 <span class="cantidadProducto">0</span>
                 <button onclick="modificarCantidad('mas', this)">+</button>
             </div>
-            <button class="añadir" onclick="añadirCarrito(event)">Añadir al carrito</button>
+            <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
         </div>
         <div class="producto-card">
             <img src="resources/dogs/dog3.jpg" alt="Perrito Picante">
@@ -98,7 +110,7 @@
                 <span class="cantidadProducto">0</span>
                 <button onclick="modificarCantidad('mas', this)">+</button>
             </div>
-            <button class="añadir" onclick="añadirCarrito(event)">Añadir al carrito</button>
+            <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
         </div>
     </div>
 
@@ -114,7 +126,7 @@
                 <span class="cantidadProducto">0</span>
                 <button onclick="modificarCantidad('mas', this)">+</button>
             </div>
-            <button class="añadir" onclick="añadirCarrito(event)">Añadir al carrito</button>
+            <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
         </div>
         <div class="producto-card">
             <img src="resources/bocadillos/sabroso.jpg" alt="SalsiDog">
@@ -124,7 +136,7 @@
                 <span class="cantidadProducto">0</span>
                 <button onclick="modificarCantidad('mas', this)">+</button>
             </div>
-            <button class="añadir" onclick="añadirCarrito(event)">Añadir al carrito</button>
+            <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
         </div>
         <div class="producto-card">
             <img src="resources/bocadillos/iberico.jpg" alt="Perrito Picante">
@@ -134,7 +146,7 @@
                 <span class="cantidadProducto">0</span>
                 <button onclick="modificarCantidad('mas', this)">+</button>
             </div>
-            <button class="añadir" onclick="añadirCarrito(event)">Añadir al carrito</button>
+            <button class="añadir" onclick="añadirCarrito()">Añadir al carrito</button>
         </div>
     </div>
 
