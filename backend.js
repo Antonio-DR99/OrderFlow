@@ -1,87 +1,28 @@
-const pedido={
-    id: generarIdPedido(), 
-    productoPrincipal:{
-        tipo:null, 
-        ingredientesBase:[],
-        ingredientesExtra:[],
+//VARIABLES GLOBALES: 
+let contadorIdPedido = 1;
+//----------------------
 
-    },
-    complementos:[],
-    bebidas:[],
-    unidades:{},
-    precioTotal:0,
-    estado:"Pendiente",
-
-    //metodos
-    seleccionarProducto(tipo, ingredientesBase){
-        this.productoPrincipal.tipo=tipo; 
-        this.productoPrincipal.ingredientesBase=ingredientesBase;
-        this.productoPrincipal.ingredientesExtra=[]; 
-    },
-
-    agregarIngredienteExtra(ingredientes){
-        this.productoPrincipal.ingredientesExtra.push(ingredientes); 
-    },
-
-    quitarIngredienteExtra(ingrediente){
-        this.productoPrincipal.ingredientesExtra=this.productoPrincipal.ingredientesExtra.filter(i => i !== ingrediente);
-    },
-
-    agregarComplemento(complemento){
-        if (!this.complementos.includes(complemento)) {
-            this.complementos.push(complemento);
-        }
-    },
-
-    seleccionarBebida(bebida) {
-        this.bebidas.push(bebida);
-    },
-
-    establecerUnidades(producto, cantidad) {
-        if (cantidad > 0 && cantidad <= 50) {
-            this.unidades[producto] = cantidad;
-        } else {
-            console.log("Cantidad no permitida (1-50 unidades).");
-        }
-    },
-
-    calcularTotal(precios) {
-        let total = 0;
-    
-        // Asegurarnos de que 'productoPrincipal' y sus propiedades están bien definidas
-        if (this.productoPrincipal && this.productoPrincipal.tipo) {
-            total += precios[this.productoPrincipal.tipo] * (this.unidades[this.productoPrincipal.tipo] || 1);
-        }
-    
-        // Asegurarnos de que 'ingredientesExtra' es un array
-        if (Array.isArray(this.productoPrincipal.ingredientesExtra)) {
-            total += this.productoPrincipal.ingredientesExtra.reduce((acc, ingrediente) => acc + precios[ingrediente], 0);
-        }
-    
-        // Asegurarnos de que 'complementos' es un array
-        if (Array.isArray(this.complementos)) {
-            total += this.complementos.reduce((acc, complemento) => acc + precios[complemento], 0);
-        }
-    
-        // Asegurarnos de que 'bebidas' es un array
-        if (Array.isArray(this.bebidas)) {
-            total += this.bebidas.reduce((acc, bebida) => acc + precios[bebida], 0);
-        }
-    
-        // Almacenamos el total calculado en la propiedad 'precioTotal'
-        this.precioTotal = total;
-    },
-
-    cambiarEstado(nuevoEstado) {
-        this.estado = nuevoEstado;
-    }
-}; 
+const pedido = {
+    id: generarIdPedido(),
+    productos: [],  
+    complementos: [],
+    bebidas: [],
+    unidades: {},
+    precioTotal: 0,
+    estado: "Pendiente",
+};
 
 const precios = {
     // Productos principales
-    "hamburguesa": 5.5,
-    "perrito caliente": 4.0,
-    "bocadillo": 3.5,
+    "La Rey Burger": 5.5,
+    "Fuego Mexicano": 5.5,
+    "el sabor viajero": 5.5,
+    "choripán": 3.50,
+    "salsidog": 3.50,
+    "perrito picante": 3.50,
+    "el crujiente": 4.0,
+    "el sabroso": 4.0,
+    "el iberico": 4.0,
 
     // Ingredientes adicionales (0.50€ c/u)
     "bacon": 0.50,
@@ -102,70 +43,85 @@ const precios = {
     "cerveza sin alcohol": 2.00
 };
 
-// Función auxiliar para generar un ID de pedido autoincremental
 function generarIdPedido() {
-    let ultimoId = localStorage.getItem("ultimoPedidoId") || 0;
-    ultimoId = parseInt(ultimoId) + 1;
-    localStorage.setItem("ultimoPedidoId", ultimoId);
-    return ultimoId;
+    return 'pedido' + contadorIdPedido++;
 }
 
+// Actualización de la función añadirCarrito para incluir complementos
 function añadirCarrito(event) {
-    // Obtener el botón que se hizo clic
-    const boton = event.target;
-    
-    // Encuentra el contenedor de la tarjeta de producto (producto-card)
-    const productoCard = boton.closest('.producto-card');
-    
-    // Si no se encuentra el contenedor, salimos de la función
-    if (!productoCard) return;
+    const productoCard = event.target.closest('.producto-card');
+    const productoSeleccionado = productoCard.querySelector("h3").textContent.trim();
 
-    // Obtener el nombre del producto y la cantidad seleccionada
-    const productoSeleccionado = productoCard.querySelector("h3").textContent;
-    const cantidadProducto = productoCard.querySelector(".cantidadProducto");
-    const cantidad = parseInt(cantidadProducto.textContent);
+    // Obtener cantidad seleccionada
+    let cantidadProducto = productoCard.querySelector(".cantidadProducto").textContent.trim();
+    cantidadProducto = parseInt(cantidadProducto) || 0;
 
-    if (cantidad > 0) {
-        // Añadir el producto al pedido
-        if (productoSeleccionado === "La Rey Burger") {
-            pedido.seleccionarProducto("hamburguesa", ["pan", "carne", "queso"]);
-            pedido.establecerUnidades("hamburguesa", cantidad);
-        } else if (productoSeleccionado === "Fuego Mexicano") {
-            pedido.seleccionarProducto("hamburguesa", ["pan", "carne", "queso", "salsa picante"]);
-            pedido.establecerUnidades("hamburguesa", cantidad);
-        } else if (productoSeleccionado === "El Sabor Viajero") {
-            pedido.seleccionarProducto("hamburguesa", ["pan", "carne", "queso", "aguacate"]);
-            pedido.establecerUnidades("hamburguesa", cantidad);
+    // Obtener complementos seleccionados
+    let complementosSeleccionados = [];
+    const complementosForm = productoCard.querySelectorAll('input[type="checkbox"]:checked'); 
+
+    for (let i = 0; i < complementosForm.length; i++) {
+        complementosSeleccionados.push(complementosForm[i].id); // Añadir el id del complemento al array
+    }
+
+    // Calcular el precio de los complementos (0.50€ por complemento)
+    let precioComplementos = complementosSeleccionados.length * 0.50;
+
+    if (cantidadProducto > 0) {
+        // Verificar si el producto ya está en el carrito
+        let productoExistente = pedido.productos.find(producto => producto.nombre === productoSeleccionado);
+
+        if (productoExistente) {
+            // Si el producto ya existe, solo actualizamos la cantidad y el precio
+            productoExistente.cantidad += cantidadProducto;
+            productoExistente.precioUnitario = precios[productoSeleccionado] + precioComplementos; // Actualizamos el precio unitario
+            productoExistente.precioTotal = productoExistente.precioUnitario * productoExistente.cantidad; // Calculamos el precio total
+        } else {
+            // Buscar el precio del producto en la lista de precios
+            let precioProducto = precios[productoSeleccionado];
+            if (precioProducto !== undefined) {
+                // Añadir el producto al carrito con los complementos seleccionados
+                pedido.productos.push({
+                    nombre: productoSeleccionado,
+                    cantidad: cantidadProducto,
+                    precioUnitario: precioProducto + precioComplementos, // Precio unitario con complementos
+                    precioTotal: (precioProducto + precioComplementos) * cantidadProducto, // Precio total
+                    complementos: complementosSeleccionados // Guardar los complementos seleccionados
+                });
+            } else {
+                console.log(`Producto "${productoSeleccionado}" no encontrado en precios.`);
+            }
         }
-
-        // Calcular el total del pedido después de añadir un producto
-        pedido.calcularTotal(precios);
-        
         // Actualizar el carrito visualmente
         actualizarCarrito();
     }
 }
 
-
-
+// Función para actualizar el carrito visualmente usando un ciclo `for` normal
 function actualizarCarrito() {
-    const carritoContainer = document.querySelector(".menuEmergente .menuInt");
-    carritoContainer.innerHTML = `
-        <h2>Carrito</h2>
-        <p>Pedido ID: ${pedido.id}</p>
-        <p>Producto: ${pedido.productoPrincipal.tipo}</p>
-        <p>Cantidad: ${pedido.unidades[pedido.productoPrincipal.tipo]}</p>
-        <p>Total: ${pedido.precioTotal}€</p>
-    `;
-}
+    const carritoContainer = document.querySelector(".menuEmergente .productosCarrito");
+    carritoContainer.innerHTML = `<h2>Carrito</h2><p>Pedido ID: ${pedido.id}</p>`;
 
-function confirmarPedido() {
-    pedido.cambiarEstado("Confirmado");
-    const zonaDisplay = document.querySelector(".zonaPedido1");
-    zonaDisplay.innerHTML = `
-        <p>Pedido Confirmado</p>
-        <p>ID: ${pedido.id}</p>
-        <p>Producto: ${pedido.productoPrincipal.tipo}</p>
-        <p>Total: ${pedido.precioTotal}€</p>
-    `;
+    let precioTotal = 0;
+
+    // Usamos un ciclo for normal para iterar sobre los productos del pedido
+    for (let i = 0; i < pedido.productos.length; i++) {
+        let producto = pedido.productos[i];
+
+        carritoContainer.innerHTML += `
+            <div class="productoEnCarrito">
+                <p>Producto: ${producto.nombre}</p>
+                <p>Cantidad: ${producto.cantidad}</p>
+                <p>Precio Unitario: ${producto.precioUnitario}€</p>
+                <p>Total: ${producto.precioTotal}€</p>
+                <p>Complementos: ${producto.complementos.join(', ') || "Ninguno"}</p>
+            </div>
+        `;
+        
+        // Acumulamos el precio total
+        precioTotal += producto.precioTotal;
+    }
+
+    // Mostrar el total final
+    carritoContainer.innerHTML += `<p>Total: ${precioTotal}€</p>`;
 }
