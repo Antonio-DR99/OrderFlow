@@ -244,3 +244,17 @@ button:active{
     transition: 0.1s ease;
 }
 
+
+.pedidoItem {
+    margin-bottom: 15px;
+}
+
+.pedidoItem p {
+    margin: 5px 0;
+}
+
+.zonaPedido1, .zonaEstado1 {
+    padding: 20px;
+    border: 1px solid #ddd;
+    margin-top: 20px;
+}

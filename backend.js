@@ -1,5 +1,6 @@
 //VARIABLES GLOBALES: 
 let contadorIdPedido = 1;
+let pedidosPendientes=[]
 //----------------------
 
 const pedido = {
@@ -20,9 +21,9 @@ const precios = {
     "Choripán": 3.50,
     "SalsiDog": 3.50,
     "Perrito Picante": 3.50,
-    "El Crujiente": 4.0,
-    "El Sabroso": 4.0,
-    "El Iberico": 4.0,
+    "El crujiente": 4.0,
+    "El sabroso": 4.0,
+    "El iberico": 4.0,
 
     // Ingredientes adicionales (0.50€ c/u)
     "bacon": 0.50,
@@ -124,4 +125,134 @@ function actualizarCarrito() {
 
     // Mostrar el total final
     carritoContainer.innerHTML += `<p>Total: ${precioTotal}€</p>`;
+}
+
+// Función para calcular el tiempo estimado basado en el número de alimentos
+function calcularTiempoEstimado(numeroAlimentos) {
+    let tiempoTotal = 0;
+
+    // Bucle clásico para calcular el tiempo basado en el número de alimentos
+    for (let i = 0; i < numeroAlimentos; i++) {
+        // Calcular un tiempo aleatorio para cada alimento (30 segundos +/- 10 segundos)
+        let tiempoAleatorio = Math.floor(Math.random() * 21) + 20; // entre 20 y 40 segundos
+        tiempoTotal += tiempoAleatorio;
+    }
+
+    return tiempoTotal; // El tiempo total en segundos
+}
+
+// Función para actualizar la vista de los pedidos en pantalla
+function actualizarVistaPedidos() {
+    const zonaPedido = document.querySelector(".zonaPedido1");
+    const zonaEstado = document.querySelector(".zonaEstado1");
+
+    // Limpiar las zonas antes de volver a renderizar
+    zonaPedido.innerHTML = '';
+    zonaEstado.innerHTML = '';
+
+    // Iterar sobre todos los pedidos pendientes
+    for (let i = 0; i < pedidosPendientes.length; i++) {
+        let pedido = pedidosPendientes[i];
+
+        // Crear un contenedor para cada pedido
+        const pedidoElemento = document.createElement('div');
+        pedidoElemento.classList.add('pedidoItem');
+        
+        // Mostrar la evolución del pedido
+        const estadoElemento = document.createElement('p');
+        estadoElemento.textContent = `Pedido ID: ${pedido.id} - Estado: ${pedido.estado}`;
+
+        const tiempoRestanteElemento = document.createElement('p');
+        if (pedido.estado === 'Listo para recoger') {
+            tiempoRestanteElemento.textContent = `Recoger ahora!`;
+            // Crear botón para simular recogida
+            const botonRecoger = document.createElement('button');
+            botonRecoger.textContent = 'Recoger Pedido';
+            botonRecoger.onclick = function() {
+                recogerPedido(pedido);
+            };
+            pedidoElemento.appendChild(botonRecoger);
+        } else if (pedido.estado === 'En proceso') {
+            tiempoRestanteElemento.textContent = `Tiempo restante: ${pedido.tiempoRestante.toFixed(1)} segundos`;
+        } else if (pedido.estado === 'Retraso') {
+            // Mostrar el retraso si el estado es "Retraso"
+            tiempoRestanteElemento.textContent = `Retraso: ${Math.abs(pedido.tiempoRestante).toFixed(1)} segundos`;
+        } else {
+            tiempoRestanteElemento.textContent = `En espera...`;
+        }
+
+        pedidoElemento.appendChild(estadoElemento);
+        pedidoElemento.appendChild(tiempoRestanteElemento);
+
+        // Agregar el pedido a la zona de evolución
+        zonaPedido.appendChild(pedidoElemento);
+    }
+}
+
+// Función para iniciar el temporizador y actualizar el estado del pedido
+function iniciarTemporizadorPedido(pedido) {
+    // Cambia el estado a "En proceso" después de 10 segundos
+    setTimeout(function() {
+        pedido.estado = "En proceso";
+        actualizarVistaPedidos();
+
+        // Inicia el intervalo para actualizar el tiempo restante
+        let intervaloId = setInterval(function() {
+            let tiempoTranscurrido = (Date.now() - pedido.inicioTiempo) / 1000;
+            pedido.tiempoRestante = Math.max(0, pedido.tiempoEstimado - tiempoTranscurrido);
+
+            // Si el pedido ya ha pasado el tiempo estimado, marcar como "Retraso"
+            if (tiempoTranscurrido > pedido.tiempoEstimado && pedido.estado !== "Retraso") {
+                pedido.estado = "Retraso";
+                pedido.tiempoRestante = tiempoTranscurrido - pedido.tiempoEstimado; // Tiempo de retraso
+            }
+
+            // Si el pedido está listo para recoger
+            if (pedido.tiempoRestante <= 0 && pedido.estado !== "Retraso") {
+                pedido.estado = "Listo para recoger";
+                clearInterval(intervaloId); // Detener el intervalo
+            }
+
+            actualizarVistaPedidos(); // Actualiza la vista de pedidos
+
+        }, 1000); // Actualiza cada 1 segundo
+    }, 10000); // Cambia a "En proceso" después de 10 segundos
+}
+
+// Función que simula la recogida de un pedido
+function recogerPedido(pedido) {
+    // Eliminar el pedido de la lista de pedidos pendientes
+    const index = pedidosPendientes.indexOf(pedido);
+    if (index > -1) {
+        pedidosPendientes.splice(index, 1);
+    }
+
+    // Actualizar la vista después de la recogida
+    actualizarVistaPedidos();
+}
+
+// Función que se llama cuando se confirma el pedido
+function confirmarPedido() {
+    // Crear el nuevo pedido
+    let nuevoPedido = {
+        id: generarIdPedido(),
+        productos: [...pedido.productos],
+        estado: "Realizado",
+        tiempoEstimado: calcularTiempoEstimado(pedido.productos.length),
+        tiempoRestante: 0,
+        inicioTiempo: Date.now()
+    };
+
+    nuevoPedido.tiempoRestante = nuevoPedido.tiempoEstimado;
+
+    // Agregar el nuevo pedido a los pedidos pendientes
+    pedidosPendientes.push(nuevoPedido);
+    actualizarVistaPedidos(); // Actualiza la vista de pedidos
+
+    // Iniciar el temporizador para el nuevo pedido
+    iniciarTemporizadorPedido(nuevoPedido);
+
+    // Reiniciar el carrito
+    pedido.productos = [];
+    actualizarCarrito();
 }
