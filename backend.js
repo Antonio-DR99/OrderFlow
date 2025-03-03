@@ -16,13 +16,13 @@ const precios = {
     // Productos principales
     "La Rey Burger": 5.5,
     "Fuego Mexicano": 5.5,
-    "el sabor viajero": 5.5,
-    "choripán": 3.50,
-    "salsidog": 3.50,
-    "perrito picante": 3.50,
-    "el crujiente": 4.0,
-    "el sabroso": 4.0,
-    "el iberico": 4.0,
+    "El Sabor Viajero": 5.5,
+    "Choripán": 3.50,
+    "SalsiDog": 3.50,
+    "Perrito Picante": 3.50,
+    "El Crujiente": 4.0,
+    "El Sabroso": 4.0,
+    "El Iberico": 4.0,
 
     // Ingredientes adicionales (0.50€ c/u)
     "bacon": 0.50,
