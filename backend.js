@@ -101,7 +101,7 @@ function añadirCarrito(event) {
 // Función para actualizar el carrito visualmente usando un ciclo `for` normal
 function actualizarCarrito() {
     const carritoContainer = document.querySelector(".menuEmergente .productosCarrito");
-    carritoContainer.innerHTML = `<h2>Carrito</h2><p>Pedido ID: ${pedido.id}</p>`;
+    carritoContainer.innerHTML = `<strong><p>Pedido ID: ${pedido.id}</p></strong>`;
 
     let precioTotal = 0;
 
@@ -124,7 +124,7 @@ function actualizarCarrito() {
     }
 
     // Mostrar el total final
-    carritoContainer.innerHTML += `<p>Total: ${precioTotal}€</p>`;
+    carritoContainer.innerHTML += `<strong><p>Total: ${precioTotal}€</p></strong>`;
 }
 
 // Función para calcular el tiempo estimado basado en el número de alimentos

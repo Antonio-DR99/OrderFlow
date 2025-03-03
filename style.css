@@ -199,6 +199,12 @@ transform: scale(1.1);
 .producto-card button.añadir:hover {
     background: #e65c00;
 }
+.productoEnCarrito{
+    border-radius: 1em;
+    background-color: rgb(216, 216, 216);
+    padding: 10px;
+    margin: 5px;
+}
 
 /* footer */
 .zonaDisplay{
