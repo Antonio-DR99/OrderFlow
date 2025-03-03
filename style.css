@@ -239,4 +239,8 @@ transform: scale(1.1);
     height: 85%;
     margin:10px;
 }
+button:active{
+    transform: scale(0.9);
+    transition: 0.1s ease;
+}
 

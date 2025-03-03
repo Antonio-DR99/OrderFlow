@@ -9,7 +9,7 @@ function modificarCantidad(accion,boton) {
 
     if (accion === "mas") {
         cantidad++; 
-    } else if (accion === "menos" && cantidad > 1) {
+    } else if (accion === "menos" && cantidad > 0) {
         cantidad--; 
     }
 
