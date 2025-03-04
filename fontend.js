@@ -16,3 +16,7 @@ function modificarCantidad(accion,boton) {
     cantidadProducto.textContent = cantidad;
 }
 
+function desplegarDiv(){
+    
+}
+

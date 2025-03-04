@@ -106,6 +106,14 @@ transform: scale(1.1);
 .menuInt button:hover {
     background: #e65c00;
 }
+/* .desplegar{
+    height: 50px;
+    overflow: hidden;
+}
+.desplegar:hover{
+    height: 100%;
+    transition: 0.3s ease-in-out;
+} */
 
 /* titulos h2 */
 .productosHeader{
