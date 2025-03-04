@@ -34,14 +34,14 @@ const precios = {
     "mayonesa especial": 0.50,
 
     // Complementos
-    "patatas fritas": 2.00,
-    "ensalada": 1.50,
-    "aros de cebolla": 2.50,
+    "Patatas fritas": 2.00,
+    "Ensalada": 1.50,
+    "Aros de cebolla": 2.50,
 
     // Bebidas
-    "agua": 1.00,
-    "refresco": 1.50,
-    "cerveza sin alcohol": 2.00
+    "Agua": 1.00,
+    "Refresco": 1.50,
+    "Cerveza": 2.00
 };
 
 function generarIdPedido() {
