@@ -95,6 +95,7 @@ function añadirCarrito(event) {
         }
         // Actualizar el carrito visualmente
         actualizarCarrito();
+        guardarPedidosEnLocalStorage();
     }
 }
 
@@ -131,7 +132,6 @@ function actualizarCarrito() {
 function calcularTiempoEstimado(numeroAlimentos) {
     let tiempoTotal = 0;
 
-    // Bucle clásico para calcular el tiempo basado en el número de alimentos
     for (let i = 0; i < numeroAlimentos; i++) {
         // Calcular un tiempo aleatorio para cada alimento (30 segundos +/- 10 segundos)
         let tiempoAleatorio = Math.floor(Math.random() * 21) + 20; // entre 20 y 40 segundos
@@ -141,7 +141,6 @@ function calcularTiempoEstimado(numeroAlimentos) {
     return tiempoTotal; // El tiempo total en segundos
 }
 
-// Función para actualizar la vista de los pedidos en pantalla
 function actualizarVistaPedidos() {
     const zonaPedido = document.querySelector(".zonaPedido1");
     const zonaEstado = document.querySelector(".zonaEstado1");
@@ -150,74 +149,71 @@ function actualizarVistaPedidos() {
     zonaPedido.innerHTML = '';
     zonaEstado.innerHTML = '';
 
-    // Iterar sobre todos los pedidos pendientes
     for (let i = 0; i < pedidosPendientes.length; i++) {
         let pedido = pedidosPendientes[i];
 
-        // Crear un contenedor para cada pedido
         const pedidoElemento = document.createElement('div');
         pedidoElemento.classList.add('pedidoItem');
-        
-        // Mostrar la evolución del pedido
-        const estadoElemento = document.createElement('p');
-        estadoElemento.textContent = `Pedido ID: ${pedido.id} - Estado: ${pedido.estado}`;
+
+        // Contenido del pedido
+        pedidoElemento.innerHTML = `
+            <p><strong>Pedido ID:</strong> ${pedido.id}</p>
+            <p><strong>Estado:</strong> ${pedido.estado}</p>
+            <p><strong>Productos:</strong> ${pedido.productos.map(p => `${p.nombre} (x${p.cantidad})`).join(', ')}</p>
+        `;
 
         const tiempoRestanteElemento = document.createElement('p');
+
         if (pedido.estado === 'Listo para recoger') {
-            tiempoRestanteElemento.textContent = `Recoger ahora!`;
-            // Crear botón para simular recogida
+            tiempoRestanteElemento.textContent = `¡Listo para recoger!`;
+
+            // Botón para recoger pedido
             const botonRecoger = document.createElement('button');
             botonRecoger.textContent = 'Recoger Pedido';
+            botonRecoger.classList.add('botonRecoger');
             botonRecoger.onclick = function() {
                 recogerPedido(pedido);
             };
+
+            // Agregar todo a la zona de estado
+            pedidoElemento.appendChild(tiempoRestanteElemento);
             pedidoElemento.appendChild(botonRecoger);
-        } else if (pedido.estado === 'En proceso') {
-            tiempoRestanteElemento.textContent = `Tiempo restante: ${pedido.tiempoRestante.toFixed(1)} segundos`;
-        } else if (pedido.estado === 'Retraso') {
-            // Mostrar el retraso si el estado es "Retraso"
-            tiempoRestanteElemento.textContent = `Retraso: ${Math.abs(pedido.tiempoRestante).toFixed(1)} segundos`;
+            zonaEstado.appendChild(pedidoElemento);
         } else {
-            tiempoRestanteElemento.textContent = `En espera...`;
+            if (pedido.estado === 'En proceso') {
+                tiempoRestanteElemento.textContent = `Tiempo restante: ${pedido.tiempoRestante.toFixed(1)} segundos`;
+            } else if (pedido.estado === 'Retraso') {
+                tiempoRestanteElemento.textContent = `Retraso: ${Math.abs(pedido.tiempoRestante).toFixed(1)} segundos`;
+            } else {
+                tiempoRestanteElemento.textContent = `En espera...`;
+            }
+
+            pedidoElemento.appendChild(tiempoRestanteElemento);
+            zonaPedido.appendChild(pedidoElemento);
         }
-
-        pedidoElemento.appendChild(estadoElemento);
-        pedidoElemento.appendChild(tiempoRestanteElemento);
-
-        // Agregar el pedido a la zona de evolución
-        zonaPedido.appendChild(pedidoElemento);
     }
 }
 
+
+
 // Función para iniciar el temporizador y actualizar el estado del pedido
 function iniciarTemporizadorPedido(pedido) {
-    // Cambia el estado a "En proceso" después de 10 segundos
-    setTimeout(function() {
-        pedido.estado = "En proceso";
+    if (pedido.estado === "Listo para recoger") return; // No iniciar si ya está listo
+
+    let intervaloId = setInterval(() => {
+        let tiempoTranscurrido = (Date.now() - pedido.inicioTiempo) / 1000;
+        pedido.tiempoRestante = Math.max(0, pedido.tiempoEstimado - tiempoTranscurrido);
+
+        if (pedido.tiempoRestante <= 0) {
+            pedido.estado = "Listo para recoger";
+            clearInterval(intervaloId);
+        }
+
+        guardarPedidosEnLocalStorage();
         actualizarVistaPedidos();
-
-        // Inicia el intervalo para actualizar el tiempo restante
-        let intervaloId = setInterval(function() {
-            let tiempoTranscurrido = (Date.now() - pedido.inicioTiempo) / 1000;
-            pedido.tiempoRestante = Math.max(0, pedido.tiempoEstimado - tiempoTranscurrido);
-
-            // Si el pedido ya ha pasado el tiempo estimado, marcar como "Retraso"
-            if (tiempoTranscurrido > pedido.tiempoEstimado && pedido.estado !== "Retraso") {
-                pedido.estado = "Retraso";
-                pedido.tiempoRestante = tiempoTranscurrido - pedido.tiempoEstimado; // Tiempo de retraso
-            }
-
-            // Si el pedido está listo para recoger
-            if (pedido.tiempoRestante <= 0 && pedido.estado !== "Retraso") {
-                pedido.estado = "Listo para recoger";
-                clearInterval(intervaloId); // Detener el intervalo
-            }
-
-            actualizarVistaPedidos(); // Actualiza la vista de pedidos
-
-        }, 1000); // Actualiza cada 1 segundo
-    }, 10000); // Cambia a "En proceso" después de 10 segundos
+    }, 1000);
 }
+
 
 // Función que simula la recogida de un pedido
 function recogerPedido(pedido) {
@@ -226,33 +222,67 @@ function recogerPedido(pedido) {
     if (index > -1) {
         pedidosPendientes.splice(index, 1);
     }
-
+    guardarPedidosEnLocalStorage();
     // Actualizar la vista después de la recogida
     actualizarVistaPedidos();
 }
 
 // Función que se llama cuando se confirma el pedido
 function confirmarPedido() {
-    // Crear el nuevo pedido
     let nuevoPedido = {
         id: generarIdPedido(),
         productos: [...pedido.productos],
         estado: "Realizado",
         tiempoEstimado: calcularTiempoEstimado(pedido.productos.length),
-        tiempoRestante: 0,
-        inicioTiempo: Date.now()
+        tiempoRestante: 0, 
+        inicioTiempo: Date.now() // Guardamos la hora exacta en que se crea el pedido
     };
 
-    nuevoPedido.tiempoRestante = nuevoPedido.tiempoEstimado;
+    nuevoPedido.tiempoRestante = nuevoPedido.tiempoEstimado; // Asignamos correctamente el tiempo restante
 
-    // Agregar el nuevo pedido a los pedidos pendientes
     pedidosPendientes.push(nuevoPedido);
-    actualizarVistaPedidos(); // Actualiza la vista de pedidos
-
-    // Iniciar el temporizador para el nuevo pedido
+    actualizarVistaPedidos();
     iniciarTemporizadorPedido(nuevoPedido);
+    guardarPedidosEnLocalStorage();
 
-    // Reiniciar el carrito
     pedido.productos = [];
     actualizarCarrito();
 }
+
+
+function guardarPedidosEnLocalStorage() {
+    console.log("Guardando pedidos en localStorage...", pedidosPendientes); // Verificar en consola
+    localStorage.setItem("pedidosPendientes", JSON.stringify(pedidosPendientes));
+}
+
+
+function cargarPedidosDesdeLocalStorage() {
+    let pedidosGuardados = localStorage.getItem("pedidosPendientes");
+
+    if (pedidosGuardados) {
+        console.log("Cargando pedidos desde localStorage..."); // Verificar en consola
+        pedidosPendientes = JSON.parse(pedidosGuardados);
+        console.log("Pedidos cargados:", pedidosPendientes); // Mostrar pedidos recuperados
+
+        pedidosPendientes.forEach(pedido => {
+            let tiempoPasado = (Date.now() - pedido.inicioTiempo) / 1000;
+            pedido.tiempoRestante = Math.max(0, pedido.tiempoEstimado - tiempoPasado);
+
+            if (pedido.tiempoRestante <= 0) {
+                pedido.estado = "Listo para recoger";
+            } else {
+                pedido.estado = "En proceso";
+                iniciarTemporizadorPedido(pedido);
+            }
+        });
+
+        actualizarVistaPedidos();
+    } else {
+        console.log("No hay pedidos en localStorage.");
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    cargarPedidosDesdeLocalStorage();
+});
