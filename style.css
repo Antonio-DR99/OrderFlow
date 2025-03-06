@@ -29,6 +29,8 @@ html{
 .iconoH{
     position: absolute;
     left: 60px;
+    margin-top: 10px;
+
 }
 .iconoH img{
     height: 180px;
@@ -83,7 +85,6 @@ li:hover{
     transition: 0.3s ease-in-out;
     backdrop-filter: blur(10px);
     overflow: hidden;
-
 }
 
 .menuEmergente:hover{
@@ -279,6 +280,8 @@ li:hover{
     display: flex;
     text-align: center;
     justify-content: center;
+    /* overflow: hidden; */
+
 }
 .zonaPedido1{
     background-color: #ffffff0a;
@@ -291,6 +294,7 @@ li:hover{
     border-radius: 1em;
     height: 85%;
     margin:10px;
+    /* overflow-y: scroll; */
 }
 button:active{
     transform: scale(0.9);
