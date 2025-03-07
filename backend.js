@@ -4,7 +4,6 @@ let pedidosPendientes=[]
 //----------------------
 
 const pedido = {
-    id: generarIdPedido(),
     productos: [],  
     complementos: [],
     bebidas: [],
@@ -55,7 +54,10 @@ function añadirCarrito(event) {
 
     // Obtener cantidad seleccionada
     let cantidadProducto = productoCard.querySelector(".cantidadProducto").textContent.trim();
-    cantidadProducto = parseInt(cantidadProducto) || 0;
+    
+    if (cantidadProducto>50) {
+        return;
+    }
 
     // Obtener complementos seleccionados
     let complementosSeleccionados = [];
@@ -102,8 +104,6 @@ function añadirCarrito(event) {
 // Función para actualizar el carrito visualmente usando un ciclo `for` normal
 function actualizarCarrito() {
     const carritoContainer = document.querySelector(".menuEmergente .productosCarrito");
-    carritoContainer.innerHTML = `<strong><p>Pedido ID: ${pedido.id}</p></strong>`;
-
     let precioTotal = 0;
 
     // Usamos un ciclo for normal para iterar sobre los productos del pedido
@@ -202,16 +202,19 @@ function iniciarTemporizadorPedido(pedido) {
 
     let intervaloId = setInterval(() => {
         let tiempoTranscurrido = (Date.now() - pedido.inicioTiempo) / 1000;
-        pedido.tiempoRestante = Math.max(0, pedido.tiempoEstimado - tiempoTranscurrido);
+        pedido.tiempoRestante = pedido.tiempoEstimado - tiempoTranscurrido;
 
         if (pedido.tiempoRestante <= 0) {
             pedido.estado = "Listo para recoger";
+            pedido.tiempoRestante = Math.abs(pedido.tiempoRestante); 
             clearInterval(intervaloId);
+        }else{
+            pedido.estado="En proceso";
         }
 
         guardarPedidosEnLocalStorage();
         actualizarVistaPedidos();
-    }, 1000);
+    }, 10000);
 }
 
 
@@ -229,10 +232,13 @@ function recogerPedido(pedido) {
 
 // Función que se llama cuando se confirma el pedido
 function confirmarPedido() {
+    if (!pedido.id) {
+        pedido.id = generarIdPedido(); // Solo asignar un ID si aún no lo tiene
+    }
     let nuevoPedido = {
-        id: generarIdPedido(),
+        id: pedido.id,
         productos: [...pedido.productos],
-        estado: "Realizado",
+        estado: "En proceso",
         tiempoEstimado: calcularTiempoEstimado(pedido.productos.length),
         tiempoRestante: 0, 
         inicioTiempo: Date.now() // Guardamos la hora exacta en que se crea el pedido
@@ -245,6 +251,7 @@ function confirmarPedido() {
     iniciarTemporizadorPedido(nuevoPedido);
     guardarPedidosEnLocalStorage();
 
+    pedido.id=null;
     pedido.productos = [];
     actualizarCarrito();
 }
