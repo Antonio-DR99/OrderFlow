@@ -261,6 +261,7 @@ li:hover{
     height: 400px;
     background-color: #000000a6;
     color: white;
+    overflow: hidden;
 }
 .zonaPedido{
     display: flex;
@@ -270,6 +271,8 @@ li:hover{
     display: flex;
     text-align: center;
     justify-content: center;
+    
+    
 }
     
 .zonaEstado{
@@ -280,7 +283,7 @@ li:hover{
     display: flex;
     text-align: center;
     justify-content: center;
-    /* overflow: hidden; */
+    overflow: hidden;
 
 }
 .zonaPedido1{
@@ -288,13 +291,15 @@ li:hover{
     border-radius: 1em;
     height: 85%;
     margin: 10px;
+    overflow-y: scroll;
+
 }
 .zonaEstado1{
     background-color: #ffffff0a;
     border-radius: 1em;
     height: 85%;
     margin:10px;
-    /* overflow-y: scroll; */
+    overflow-y: scroll;
 }
 button:active{
     transform: scale(0.9);

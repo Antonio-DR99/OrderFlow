@@ -22,7 +22,7 @@ const precios = {
     "Perrito Picante": 3.50,
     "El crujiente": 4.0,
     "El sabroso": 4.0,
-    "El iberico": 4.0,
+    "El Ibérico": 4.0,
 
     // Ingredientes adicionales (0.50€ c/u)
     "bacon": 0.50,
@@ -126,7 +126,7 @@ function actualizarCarrito() {
 // Función para calcular el tiempo estimado basado en el número de productos y sus complementos
 function calcularTiempoEstimado(productos) {
     let tiempoFijo = 0;  // Tiempo real/fijo que tarda el cocinero
-    let tiempoEstimado;  // Tiempo estimado que se muestra al cliente
+    let tiempoEstimado=0;  // Tiempo estimado que se muestra al cliente
 
     // Iterar sobre los productos
     productos.forEach(producto => {
@@ -261,16 +261,45 @@ function confirmarPedido() {
     };
 
     pedidosPendientes.push(nuevoPedido);
-    console.log("Pedido confirmado:", nuevoPedido); // Verifica aquí
+    console.log("Pedido confirmado:", nuevoPedido);
     actualizarVistaPedidos();
     iniciarTemporizadorPedido(nuevoPedido);
     guardarPedidosEnLocalStorage();
 
-    pedido.id = null;
-    pedido.productos = [];
-    actualizarCarrito();
+    // Limpiar tanto el carrito como el panel de selección
+    limpiarCarrito();
+    limpiarFormulario();
+    pedido.id = null; // Reiniciar el ID del pedido actual
+    actualizarCarrito(); // Actualizar la vista del carrito
 }
 
+
+function limpiarFormulario() {
+    // Limpiar inputs de texto
+    const inputsTexto = document.querySelectorAll('input[type="text"]');
+    inputsTexto.forEach(input => input.value = "");
+
+    // Reiniciar selects
+    const selects = document.querySelectorAll('select');
+    selects.forEach(select => select.selectedIndex = 0);
+
+    // Desmarcar todos los checkboxes de complementos
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => checkbox.checked = false);
+
+    // Reiniciar las cantidades en el panel de selección
+    const cantidades = document.querySelectorAll('.cantidadProducto');
+    cantidades.forEach(cantidad => cantidad.textContent = "0");
+}
+function limpiarCarrito() {
+    pedido.productos = [];
+    pedido.complementos = [];
+    pedido.bebidas = [];
+    pedido.unidades = {};
+    pedido.precioTotal = 0;
+    const carritoContainer = document.querySelector(".menuEmergente .productosCarrito");
+    carritoContainer.innerHTML = ''; // Limpiar visualmente el carrito
+}
 function guardarPedidosEnLocalStorage() {
     localStorage.setItem("pedidosPendientes", JSON.stringify(pedidosPendientes));
 }
