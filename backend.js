@@ -53,7 +53,7 @@ function añadirCarrito(event) {
     const productoSeleccionado = productoCard.querySelector("h3").textContent.trim();
 
     // Obtener cantidad seleccionada
-    let cantidadProducto = productoCard.querySelector(".cantidadProducto").textContent.trim();
+    let cantidadProducto = parseInt(productoCard.querySelector(".cantidadProducto").textContent.trim());
     
     if (cantidadProducto>50) {
         return;
@@ -104,12 +104,11 @@ function añadirCarrito(event) {
 // Función para actualizar el carrito visualmente usando un ciclo `for` normal
 function actualizarCarrito() {
     const carritoContainer = document.querySelector(".menuEmergente .productosCarrito");
+    carritoContainer.innerHTML = ''; // Limpiar el contenedor primero
     let precioTotal = 0;
 
-    // Usamos un ciclo for normal para iterar sobre los productos del pedido
     for (let i = 0; i < pedido.productos.length; i++) {
         let producto = pedido.productos[i];
-
         carritoContainer.innerHTML += `
             <div class="productoEnCarrito">
                 <p>Producto: ${producto.nombre}</p>
@@ -119,43 +118,47 @@ function actualizarCarrito() {
                 <p>Complementos: ${producto.complementos.join(', ') || "Ninguno"}</p>
             </div>
         `;
-        
-        // Acumulamos el precio total
         precioTotal += producto.precioTotal;
     }
-
-    // Mostrar el total final
     carritoContainer.innerHTML += `<strong><p>Total: ${precioTotal}€</p></strong>`;
 }
 
-// Función para calcular el tiempo estimado basado en el número de alimentos
-function calcularTiempoEstimado(numeroAlimentos) {
-    let tiempoTotal = 0;
+// Función para calcular el tiempo estimado basado en el número de productos y sus complementos
+function calcularTiempoEstimado(productos) {
+    let tiempoEstimado = 0; // Tiempo mostrado al cliente
+    let tiempoReal = 0;     // Tiempo real que tarda el cocinero
 
-    for (let i = 0; i < numeroAlimentos; i++) {
-        // Calcular un tiempo aleatorio para cada alimento (30 segundos +/- 10 segundos)
-        let tiempoAleatorio = Math.floor(Math.random() * 21) + 20; // entre 20 y 40 segundos
-        tiempoTotal += tiempoAleatorio;
-    }
+    // Iterar sobre los productos
+    productos.forEach(producto => {
+        // Tiempo estimado: 20 segundos por producto (sin complementos)
+        tiempoEstimado += 20;
+        // Tiempo real: 30 segundos base por producto
+        tiempoReal += 30;
 
-    return tiempoTotal; // El tiempo total en segundos
+        // Si el producto tiene complementos, añadir tiempo aleatorio al tiempo real
+        if (producto.complementos && producto.complementos.length > 0) {
+            producto.complementos.forEach(() => {
+                let tiempoAleatorioComplemento = Math.floor(Math.random() * 10) + 1; // Entre 1 y 10 segundos
+                tiempoReal += tiempoAleatorioComplemento;
+            });
+        }
+    });
+
+    return { tiempoEstimado, tiempoReal }; // Retornamos ambos tiempos
 }
 
 function actualizarVistaPedidos() {
     const zonaPedido = document.querySelector(".zonaPedido1");
     const zonaEstado = document.querySelector(".zonaEstado1");
 
-    // Limpiar las zonas antes de volver a renderizar
     zonaPedido.innerHTML = '';
     zonaEstado.innerHTML = '';
 
     for (let i = 0; i < pedidosPendientes.length; i++) {
         let pedido = pedidosPendientes[i];
-
         const pedidoElemento = document.createElement('div');
         pedidoElemento.classList.add('pedidoItem');
 
-        // Contenido del pedido
         pedidoElemento.innerHTML = `
             <p><strong>Pedido ID:</strong> ${pedido.id}</p>
             <p><strong>Estado:</strong> ${pedido.estado}</p>
@@ -166,28 +169,26 @@ function actualizarVistaPedidos() {
 
         if (pedido.estado === 'Listo para recoger') {
             tiempoRestanteElemento.textContent = `¡Listo para recoger!`;
-
-            // Botón para recoger pedido
             const botonRecoger = document.createElement('button');
             botonRecoger.textContent = 'Recoger Pedido';
             botonRecoger.classList.add('botonRecoger');
             botonRecoger.onclick = function() {
                 recogerPedido(pedido);
             };
-
-            // Agregar todo a la zona de estado
             pedidoElemento.appendChild(tiempoRestanteElemento);
             pedidoElemento.appendChild(botonRecoger);
             zonaEstado.appendChild(pedidoElemento);
+        } else if (pedido.estado === 'Retraso') {
+            const retraso = (pedido.tiempoReal - pedido.tiempoEstimado).toFixed(1);
+            tiempoRestanteElemento.textContent = `Retraso: +${retraso} segundos (Faltan ${pedido.tiempoRestante.toFixed(1)} segundos)`;
+            pedidoElemento.appendChild(tiempoRestanteElemento);
+            zonaPedido.appendChild(pedidoElemento);
+        } else if (pedido.estado === 'En proceso') {
+            tiempoRestanteElemento.textContent = `Tiempo restante estimado: ${pedido.tiempoRestante.toFixed(1)} segundos`;
+            pedidoElemento.appendChild(tiempoRestanteElemento);
+            zonaPedido.appendChild(pedidoElemento);
         } else {
-            if (pedido.estado === 'En proceso') {
-                tiempoRestanteElemento.textContent = `Tiempo restante: ${pedido.tiempoRestante.toFixed(1)} segundos`;
-            } else if (pedido.estado === 'Retraso') {
-                tiempoRestanteElemento.textContent = `Retraso: ${Math.abs(pedido.tiempoRestante).toFixed(1)} segundos`;
-            } else {
-                tiempoRestanteElemento.textContent = `En espera...`;
-            }
-
+            tiempoRestanteElemento.textContent = `En espera...`;
             pedidoElemento.appendChild(tiempoRestanteElemento);
             zonaPedido.appendChild(pedidoElemento);
         }
@@ -198,35 +199,42 @@ function actualizarVistaPedidos() {
 
 // Función para iniciar el temporizador y actualizar el estado del pedido
 function iniciarTemporizadorPedido(pedido) {
-    if (pedido.estado === "Listo para recoger") return; // No iniciar si ya está listo
+    if (pedido.estado === "Listo para recoger") return;
 
     let intervaloId = setInterval(() => {
         let tiempoTranscurrido = (Date.now() - pedido.inicioTiempo) / 1000;
-        pedido.tiempoRestante = pedido.tiempoEstimado - tiempoTranscurrido;
 
-        if (pedido.tiempoRestante <= 0) {
+        if (tiempoTranscurrido >= pedido.tiempoReal) {
             pedido.estado = "Listo para recoger";
-            pedido.tiempoRestante = Math.abs(pedido.tiempoRestante); 
+            pedido.tiempoRestante = 0;
             clearInterval(intervaloId);
-        }else{
-            pedido.estado="En proceso";
+        } else if (tiempoTranscurrido > pedido.tiempoEstimado) {
+            pedido.estado = "Retraso";
+            pedido.tiempoRestante = pedido.tiempoReal - tiempoTranscurrido;
+        } else {
+            pedido.estado = "En proceso";
+            pedido.tiempoRestante = pedido.tiempoEstimado - tiempoTranscurrido;
         }
 
         guardarPedidosEnLocalStorage();
         actualizarVistaPedidos();
-    }, 10000);
+    }, 1000);
+
+    // Guardar el intervaloId en el pedido para poder detenerlo si es necesario
+    pedido.intervaloId = intervaloId;
 }
 
 
 // Función que simula la recogida de un pedido
 function recogerPedido(pedido) {
-    // Eliminar el pedido de la lista de pedidos pendientes
+    if (pedido.intervaloId) {
+        clearInterval(pedido.intervaloId); // Detener el temporizador si existe
+    }
     const index = pedidosPendientes.indexOf(pedido);
     if (index > -1) {
         pedidosPendientes.splice(index, 1);
     }
     guardarPedidosEnLocalStorage();
-    // Actualizar la vista después de la recogida
     actualizarVistaPedidos();
 }
 
@@ -235,13 +243,17 @@ function confirmarPedido() {
     if (!pedido.id) {
         pedido.id = generarIdPedido(); // Solo asignar un ID si aún no lo tiene
     }
+
+    const tiempos = calcularTiempoEstimado(pedido.productos);
+
     let nuevoPedido = {
         id: pedido.id,
         productos: [...pedido.productos],
         estado: "En proceso",
-        tiempoEstimado: calcularTiempoEstimado(pedido.productos.length),
-        tiempoRestante: 0, 
-        inicioTiempo: Date.now() // Guardamos la hora exacta en que se crea el pedido
+        tiempoEstimado: tiempos.tiempoEstimado, // Estimación optimista
+        tiempoReal: tiempos.tiempoReal,         // Tiempo real del cocinero
+        tiempoRestante: tiempos.tiempoEstimado, // Inicialmente el estimado
+        inicioTiempo: Date.now()
     };
 
     nuevoPedido.tiempoRestante = nuevoPedido.tiempoEstimado; // Asignamos correctamente el tiempo restante
@@ -251,7 +263,7 @@ function confirmarPedido() {
     iniciarTemporizadorPedido(nuevoPedido);
     guardarPedidosEnLocalStorage();
 
-    pedido.id=null;
+    pedido.id = null;
     pedido.productos = [];
     actualizarCarrito();
 }
@@ -267,19 +279,24 @@ function cargarPedidosDesdeLocalStorage() {
     let pedidosGuardados = localStorage.getItem("pedidosPendientes");
 
     if (pedidosGuardados) {
-        console.log("Cargando pedidos desde localStorage..."); // Verificar en consola
+        console.log("Cargando pedidos desde localStorage...");
         pedidosPendientes = JSON.parse(pedidosGuardados);
-        console.log("Pedidos cargados:", pedidosPendientes); // Mostrar pedidos recuperados
+        console.log("Pedidos cargados:", pedidosPendientes);
 
         pedidosPendientes.forEach(pedido => {
             let tiempoPasado = (Date.now() - pedido.inicioTiempo) / 1000;
-            pedido.tiempoRestante = Math.max(0, pedido.tiempoEstimado - tiempoPasado);
 
-            if (pedido.tiempoRestante <= 0) {
+            if (tiempoPasado >= pedido.tiempoReal) {
                 pedido.estado = "Listo para recoger";
+                pedido.tiempoRestante = 0;
+            } else if (tiempoPasado > pedido.tiempoEstimado) {
+                pedido.estado = "Retraso";
+                pedido.tiempoRestante = pedido.tiempoReal - tiempoPasado;
+                iniciarTemporizadorPedido(pedido); // Reiniciar el temporizador
             } else {
                 pedido.estado = "En proceso";
-                iniciarTemporizadorPedido(pedido);
+                pedido.tiempoRestante = pedido.tiempoEstimado - tiempoPasado;
+                iniciarTemporizadorPedido(pedido); // Reiniciar el temporizador
             }
         });
 
