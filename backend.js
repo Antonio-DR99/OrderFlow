@@ -221,8 +221,8 @@ function iniciarTemporizadorPedido(pedido) {
             pedido.tiempoRestante = pedido.tiempoEstimado - tiempoTranscurrido;
         }
 
-        guardarPedidosEnLocalStorage();
-        actualizarVistaPedidos();
+        actualizarVistaPedidos(); // Solo actualiza la vista
+        // No guardes aquí, guárdalo solo cuando sea necesario
     }, 1000);
 
     pedido.intervaloId = intervaloId;
@@ -254,13 +254,14 @@ function confirmarPedido() {
         id: pedido.id,
         productos: [...pedido.productos],
         estado: "En proceso",
-        tiempoEstimado: tiempos.tiempoEstimado, // Tiempo estimado con variación
-        tiempoFijo: tiempos.tiempoFijo,         // Tiempo real/fijo del cocinero
-        tiempoRestante: tiempos.tiempoEstimado, // Inicialmente el estimado
+        tiempoEstimado: tiempos.tiempoEstimado,
+        tiempoFijo: tiempos.tiempoFijo,
+        tiempoRestante: tiempos.tiempoEstimado,
         inicioTiempo: Date.now()
     };
 
     pedidosPendientes.push(nuevoPedido);
+    console.log("Pedido confirmado:", nuevoPedido); // Verifica aquí
     actualizarVistaPedidos();
     iniciarTemporizadorPedido(nuevoPedido);
     guardarPedidosEnLocalStorage();
@@ -271,7 +272,6 @@ function confirmarPedido() {
 }
 
 function guardarPedidosEnLocalStorage() {
-    console.log("Guardando pedidos en localStorage...", pedidosPendientes); // Verificar en consola
     localStorage.setItem("pedidosPendientes", JSON.stringify(pedidosPendientes));
 }
 
