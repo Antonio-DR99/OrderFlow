@@ -334,3 +334,18 @@ button:active{
 .top:hover{
     color: #e65c00;
 }
+
+.retraso {
+    background-color: #f8d7da; /* Color de fondo rojo claro */
+    border: 1px solid #f5c6cb; /* Borde rojo claro */
+    color: #721c24; /* Texto rojo oscuro */
+    padding: 10px;
+    font-weight: bold;
+    animation: parpadeo 1s infinite; /* Efecto parpadeo */
+}
+
+@keyframes parpadeo {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}

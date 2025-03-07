@@ -163,7 +163,9 @@ function actualizarVistaPedidos() {
         let pedido = pedidosPendientes[i];
         const pedidoElemento = document.createElement('div');
         pedidoElemento.classList.add('pedidoItem');
-
+        if (pedido.estado === "Retraso") {
+            pedidoElemento.classList.add('retraso');
+        }
         pedidoElemento.innerHTML = `
             <p><strong>Pedido ID:</strong> ${pedido.id}</p>
             <p><strong>Estado:</strong> ${pedido.estado}</p>
@@ -177,15 +179,21 @@ function actualizarVistaPedidos() {
             const botonRecoger = document.createElement('button');
             botonRecoger.textContent = 'Recoger Pedido';
             botonRecoger.classList.add('botonRecoger');
-            botonRecoger.onclick = function() {
+            botonRecoger.onclick = function () {
                 recogerPedido(pedido);
             };
             pedidoElemento.appendChild(tiempoRestanteElemento);
             pedidoElemento.appendChild(botonRecoger);
             zonaEstado.appendChild(pedidoElemento);
         } else if (pedido.estado === 'Retraso') {
-            const retraso = (pedido.tiempoReal - pedido.tiempoEstimado).toFixed(1);
-            tiempoRestanteElemento.textContent = `Retraso: +${retraso} segundos (Faltan ${pedido.tiempoRestante.toFixed(1)} segundos)`;
+            // Verificar si los valores de tiempoReal y tiempoEstimado son números válidos
+            const tiempoReal = pedido.tiempoReal;
+            const tiempoEstimado = pedido.tiempoEstimado;
+            if (isNaN(tiempoReal) || isNaN(tiempoEstimado)) {
+                console.log(`Error: Tiempo real o estimado no válido. Pedido ID: ${pedido.id}`);
+            } else {
+                const retraso = (tiempoReal - tiempoEstimado).toFixed(1);
+            }
             pedidoElemento.appendChild(tiempoRestanteElemento);
             zonaPedido.appendChild(pedidoElemento);
         } else if (pedido.estado === 'En proceso') {
@@ -199,6 +207,7 @@ function actualizarVistaPedidos() {
         }
     }
 }
+
 
 
 
@@ -257,7 +266,8 @@ function confirmarPedido() {
         tiempoEstimado: tiempos.tiempoEstimado,
         tiempoFijo: tiempos.tiempoFijo,
         tiempoRestante: tiempos.tiempoEstimado,
-        inicioTiempo: Date.now()
+        inicioTiempo: Date.now(),
+        tiempoReal:0,
     };
 
     pedidosPendientes.push(nuevoPedido);
