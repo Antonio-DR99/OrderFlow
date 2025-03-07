@@ -125,26 +125,31 @@ function actualizarCarrito() {
 
 // Función para calcular el tiempo estimado basado en el número de productos y sus complementos
 function calcularTiempoEstimado(productos) {
-    let tiempoEstimado = 0; // Tiempo mostrado al cliente
-    let tiempoReal = 0;     // Tiempo real que tarda el cocinero
+    let tiempoFijo = 0;  // Tiempo real/fijo que tarda el cocinero
+    let tiempoEstimado;  // Tiempo estimado que se muestra al cliente
 
     // Iterar sobre los productos
     productos.forEach(producto => {
-        // Tiempo estimado: 20 segundos por producto (sin complementos)
-        tiempoEstimado += 20;
-        // Tiempo real: 30 segundos base por producto
-        tiempoReal += 30;
+        // Tiempo fijo: 30 segundos base por producto
+        tiempoFijo += 30;
 
-        // Si el producto tiene complementos, añadir tiempo aleatorio al tiempo real
+        // Si el producto tiene complementos, añadir tiempo aleatorio al tiempo fijo
         if (producto.complementos && producto.complementos.length > 0) {
             producto.complementos.forEach(() => {
                 let tiempoAleatorioComplemento = Math.floor(Math.random() * 10) + 1; // Entre 1 y 10 segundos
-                tiempoReal += tiempoAleatorioComplemento;
+                tiempoFijo += tiempoAleatorioComplemento;
             });
         }
     });
 
-    return { tiempoEstimado, tiempoReal }; // Retornamos ambos tiempos
+    // Calcular el tiempo estimado como tiempoFijo ± 10 segundos
+    let variacion = Math.floor(Math.random() * 21) - 10; // Genera un número entre -10 y 10
+    tiempoEstimado = tiempoFijo + variacion;
+
+    // Asegurar que el tiempo estimado no sea negativo
+    if (tiempoEstimado < 0) tiempoEstimado = 0;
+
+    return { tiempoEstimado, tiempoFijo }; // Retornamos ambos tiempos
 }
 
 function actualizarVistaPedidos() {
@@ -204,13 +209,13 @@ function iniciarTemporizadorPedido(pedido) {
     let intervaloId = setInterval(() => {
         let tiempoTranscurrido = (Date.now() - pedido.inicioTiempo) / 1000;
 
-        if (tiempoTranscurrido >= pedido.tiempoReal) {
+        if (tiempoTranscurrido >= pedido.tiempoFijo) {
             pedido.estado = "Listo para recoger";
             pedido.tiempoRestante = 0;
             clearInterval(intervaloId);
         } else if (tiempoTranscurrido > pedido.tiempoEstimado) {
             pedido.estado = "Retraso";
-            pedido.tiempoRestante = pedido.tiempoReal - tiempoTranscurrido;
+            pedido.tiempoRestante = pedido.tiempoFijo - tiempoTranscurrido;
         } else {
             pedido.estado = "En proceso";
             pedido.tiempoRestante = pedido.tiempoEstimado - tiempoTranscurrido;
@@ -220,7 +225,6 @@ function iniciarTemporizadorPedido(pedido) {
         actualizarVistaPedidos();
     }, 1000);
 
-    // Guardar el intervaloId en el pedido para poder detenerlo si es necesario
     pedido.intervaloId = intervaloId;
 }
 
@@ -241,7 +245,7 @@ function recogerPedido(pedido) {
 // Función que se llama cuando se confirma el pedido
 function confirmarPedido() {
     if (!pedido.id) {
-        pedido.id = generarIdPedido(); // Solo asignar un ID si aún no lo tiene
+        pedido.id = generarIdPedido();
     }
 
     const tiempos = calcularTiempoEstimado(pedido.productos);
@@ -250,13 +254,11 @@ function confirmarPedido() {
         id: pedido.id,
         productos: [...pedido.productos],
         estado: "En proceso",
-        tiempoEstimado: tiempos.tiempoEstimado, // Estimación optimista
-        tiempoReal: tiempos.tiempoReal,         // Tiempo real del cocinero
+        tiempoEstimado: tiempos.tiempoEstimado, // Tiempo estimado con variación
+        tiempoFijo: tiempos.tiempoFijo,         // Tiempo real/fijo del cocinero
         tiempoRestante: tiempos.tiempoEstimado, // Inicialmente el estimado
         inicioTiempo: Date.now()
     };
-
-    nuevoPedido.tiempoRestante = nuevoPedido.tiempoEstimado; // Asignamos correctamente el tiempo restante
 
     pedidosPendientes.push(nuevoPedido);
     actualizarVistaPedidos();
@@ -267,7 +269,6 @@ function confirmarPedido() {
     pedido.productos = [];
     actualizarCarrito();
 }
-
 
 function guardarPedidosEnLocalStorage() {
     console.log("Guardando pedidos en localStorage...", pedidosPendientes); // Verificar en consola
@@ -286,17 +287,17 @@ function cargarPedidosDesdeLocalStorage() {
         pedidosPendientes.forEach(pedido => {
             let tiempoPasado = (Date.now() - pedido.inicioTiempo) / 1000;
 
-            if (tiempoPasado >= pedido.tiempoReal) {
+            if (tiempoPasado >= pedido.tiempoFijo) {
                 pedido.estado = "Listo para recoger";
                 pedido.tiempoRestante = 0;
             } else if (tiempoPasado > pedido.tiempoEstimado) {
                 pedido.estado = "Retraso";
-                pedido.tiempoRestante = pedido.tiempoReal - tiempoPasado;
-                iniciarTemporizadorPedido(pedido); // Reiniciar el temporizador
+                pedido.tiempoRestante = pedido.tiempoFijo - tiempoPasado;
+                iniciarTemporizadorPedido(pedido);
             } else {
                 pedido.estado = "En proceso";
                 pedido.tiempoRestante = pedido.tiempoEstimado - tiempoPasado;
-                iniciarTemporizadorPedido(pedido); // Reiniciar el temporizador
+                iniciarTemporizadorPedido(pedido);
             }
         });
 
