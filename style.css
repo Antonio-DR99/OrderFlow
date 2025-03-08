@@ -334,15 +334,30 @@ button:active{
 .top:hover{
     color: #e65c00;
 }
+.retraso, .listo {
+    display: inline-block; /* Para que no ocupe todo el ancho */
+    max-width: 90%; /* Ajusta el tamaño del contenedor */
+    border-radius: 20px; /* Hace que el fondo se vea más redondeado */
+    padding: 10px 20px; /* Ajusta el padding para mejor proporción */
+    font-weight: bold;
+    text-align: center;
+    animation: parpadeo 1s infinite; /* Efecto parpadeo */
+}
 
+/* Manteniendo los colores originales */
 .retraso {
     background-color: #f8d7da; /* Color de fondo rojo claro */
     border: 1px solid #f5c6cb; /* Borde rojo claro */
     color: #721c24; /* Texto rojo oscuro */
-    padding: 10px;
-    font-weight: bold;
-    animation: parpadeo 1s infinite; /* Efecto parpadeo */
 }
+
+.listo {
+    background-color: #d4edda; /* Color de fondo verde claro */
+    border: 1px solid #c3e6cb; /* Borde verde claro */
+    color: #155724; /* Texto verde oscuro */
+}
+
+
 
 @keyframes parpadeo {
     0% { opacity: 1; }

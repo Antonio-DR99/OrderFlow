@@ -163,8 +163,12 @@ function actualizarVistaPedidos() {
         let pedido = pedidosPendientes[i];
         const pedidoElemento = document.createElement('div');
         pedidoElemento.classList.add('pedidoItem');
+
+
         if (pedido.estado === "Retraso") {
             pedidoElemento.classList.add('retraso');
+        }else if (pedido.estado==="Listo para recoger"){
+            pedidoElemento.classList.add('listo'); 
         }
         pedidoElemento.innerHTML = `
             <p><strong>Pedido ID:</strong> ${pedido.id}</p>
